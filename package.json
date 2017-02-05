@@ -1,0 +1,32 @@
+{
+  "name": "kancolle-battle-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.1.4",
+    "babel-polyfill": "^6.22.0",
+    "babel-preset-stage-3": "^6.22.0",
+    "body-parser": "~1.15.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "express": "~4.14.0",
+    "mongo": "^0.1.0",
+    "mongoskin": "^2.1.0",
+    "morgan": "~1.7.0",
+    "mysql": "^2.13.0",
+    "sequelize": "^3.30.0",
+    "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-preset-es2015": "^6.22.0"
+  }
+}
