@@ -955,7 +955,7 @@ let PLANEDEFAULT = new Ship(0, 'PLANEDEFAULT', 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 3, 
 PLANEDEFAULT.CVshelltype = true;
 
 function Equip(equipid, level) {
-    for (let key in EQDATA[equipid]) this[key] = kcEQDATA.EQDATA[equipid][key];
+    for (let key in kcEQDATA.EQDATA[equipid]) this[key] = kcEQDATA.EQDATA[equipid][key];
     this.mid = equipid;
     if (level) this.setImprovement(level);
 }
