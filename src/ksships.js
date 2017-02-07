@@ -175,7 +175,7 @@ Ship.prototype.loadEquips = function (equips, levels, addstats) {
     let fitcounts = {};
     for (let i = 0; i < equips.length; i++) {
         if (!equips[i]) continue;
-        let eq = new Equip(equips[i], levels[i]);
+        let eq = new Equip(equips[i].mid, equips[i].level);
 
         if (eq.RNG && eq.RNG > this.RNG) this.RNG = eq.RNG;
         if (eq.ACC) this.ACC += eq.ACC;
