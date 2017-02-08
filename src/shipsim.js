@@ -4,6 +4,7 @@
 import {EQTDATA} from "./kcEQDATA";
 import {code as code2, shuffle} from "./sharded";
 import {SHIPDATA} from "./kcSHIPDATA";
+import {Fleet} from "./ksships";
 
 let code = code2;
 
@@ -2106,4 +2107,4 @@ function simStats(numsims, doNB, NBonly, aironly, landbomb, forms) {
     return 0;
 }
 
-export {sim};
+export {sim, loadFleet, ALLFORMATIONS};

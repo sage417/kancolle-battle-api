@@ -1,4 +1,4 @@
-import {sim} from "../shipsim.js";
+import {sim, ALLFORMATIONS} from "../shipsim.js";
 import {db} from "../db";
 import {Fleet, Ship} from "../ksships";
 import {ENEMYCOMPS} from "../kcENEMYCOMP";
@@ -13,13 +13,14 @@ router.get('/', function (req, res, next) {
         .then(function (result) {
             let fleet1 = memberFleet(result.fleets[0]);
             let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_no);
-            let battle_result = sim(fleet1, fleet2, false, false, false, false, false, {
+            let BAPI = {
                 data: {},
                 yasen: {},
                 mvp: [],
                 rating: ''
-            });
-            res.send(battle_result);
+            };
+            let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
+            res.send(BAPI);
         }).catch(function (err) {
         console.error(err);
         next(err);
@@ -27,7 +28,7 @@ router.get('/', function (req, res, next) {
 });
 
 function underSeaFleet(traveller_no, map_cell_no) {
-    let fleet = new Fleet(1, false);
+    let fleet = new Fleet(2, false);
     let world_prefix = Math.trunc(traveller_no / 10);
     let world_sufix = traveller_no % 10;
     console.log(ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`]['A']);
@@ -40,6 +41,7 @@ function underSeaFleet(traveller_no, map_cell_no) {
         s.push(ship);
     }
     fleet.loadShips(s);
+    fleet.formation = ALLFORMATIONS['1'];
     return fleet;
 }
 
@@ -54,6 +56,7 @@ function memberFleet(fleet) {
         ships.push(s);
     }
     fleet1.loadShips(ships);
+    fleet1.formation = ALLFORMATIONS['1'];
     return fleet1;
 }
 
