@@ -14,10 +14,8 @@ router.get('/', function (req, res, next) {
             let fleet1 = memberFleet(result.fleets[0]);
             let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_no);
             let BAPI = {
-                data: {},
-                yasen: {},
-                mvp: [],
-                rating: ''
+                api_data: {},
+                api_msg: ''
             };
             let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
             res.send(BAPI);

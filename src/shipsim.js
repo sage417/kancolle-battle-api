@@ -1566,28 +1566,28 @@ function airPhase(alive1, subsalive1, alive2, subsalive2, APIkouku) {
 
 function supportPhase(shipsS, alive2, subsalive2, suptype, BAPI) {
     if (C) {
-        BAPI.data.api_support_flag = suptype;
-        BAPI.data.api_support_info = {api_support_airatack: null, api_support_hourai: null};
-        if (suptype == 2 || suptype == 3) BAPI.data.api_support_info.api_support_hourai = {
+        BAPI.api_data.api_support_flag = suptype;
+        BAPI.api_data.api_support_info = {api_support_airatack: null, api_support_hourai: null};
+        if (suptype == 2 || suptype == 3) BAPI.api_data.api_support_info.api_support_hourai = {
             api_cl_list: [0, 0, 0, 0, 0, 0, 0],
             api_damage: [0, 0, 0, 0, 0, 0, 0],
             api_deck_id: 3
         };
         else if (suptype == 1) {
-            BAPI.data.api_support_info.api_support_airatack = {
+            BAPI.api_data.api_support_info.api_support_airatack = {
                 api_plane_from: [[-1]],
                 api_stage1: null,
                 api_stage2: null,
                 api_stage3: null
             };
-            BAPI.data.api_support_info.api_support_airatack.api_stage1 = {
+            BAPI.api_data.api_support_info.api_support_airatack.api_stage1 = {
                 api_e_count: 0,
                 api_e_lostcount: 0,
                 api_f_count: 0,
                 api_f_lostcount: 0
             };
-            BAPI.data.api_support_info.api_support_airatack.api_stage2 = {api_f_count: 0, api_f_lostcount: 0};
-            BAPI.data.api_support_info.api_support_airatack.api_stage3 = {
+            BAPI.api_data.api_support_info.api_support_airatack.api_stage2 = {api_f_count: 0, api_f_lostcount: 0};
+            BAPI.api_data.api_support_info.api_support_airatack.api_stage3 = {
                 api_ebak_flag: [-1, 0, 0, 0, 0, 0, 0],
                 api_edam: [-1, 0, 0, 0, 0, 0, 0],
                 api_erai_flag: [-1, 0, 0, 0, 0, 0, 0],
@@ -1597,7 +1597,7 @@ function supportPhase(shipsS, alive2, subsalive2, suptype, BAPI) {
     }
     if (!alive2.length) return;
     if (suptype == 2 || suptype == 3) {
-        var hou = (BAPI) ? BAPI.data.api_support_info.api_support_hourai : undefined;
+        var hou = (BAPI) ? BAPI.api_data.api_support_info.api_support_hourai : undefined;
         for (var i = 0; i < shipsS.length; i++) {
             var ship = shipsS[i];
             var target = choiceWProtect(alive2);
@@ -1637,8 +1637,8 @@ function supportPhase(shipsS, alive2, subsalive2, suptype, BAPI) {
         for (var i = 0; i < shipsS.length; i++) shipsS[i].id = 1;
         var prevAS = alive2[0].fleet.AS;
         compareAP(shipsS[0].fleet, alive2[0].fleet);
-        AADefenceFighters(shipsS, false, (C) ? BAPI.data.api_support_info.api_support_airatack : null);
-        AADefenceBombersAndAirstrike(shipsS, alive2, alive2.concat(subsalive2), (C) ? BAPI.data.api_support_info.api_support_airatack : null, true);
+        AADefenceFighters(shipsS, false, (C) ? BAPI.api_data.api_support_info.api_support_airatack : null);
+        AADefenceBombersAndAirstrike(shipsS, alive2, alive2.concat(subsalive2), (C) ? BAPI.api_data.api_support_info.api_support_airatack : null, true);
         alive2[0].fleet.AS = prevAS;
     }
 }
@@ -1709,7 +1709,7 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
 
     if (C) {
         console.log('ENGAGEMENT: ' + ENGAGEMENT);
-        var dataroot = (NBonly) ? BAPI.yasen : BAPI.data;
+        var dataroot = (NBonly) ? BAPI.yasen : BAPI.api_data;
         dataroot.api_formation = [F1.formation.id, F2.formation.id, {1: 1, .8: 2, 1.2: 3, .6: 4}[ENGAGEMENT]];
         dataroot.api_dock_id = 1;
         dataroot.api_maxhps = [-1];
@@ -1742,23 +1742,23 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
 
     //opening airstrike
     if (!NBonly && alive1.length + subsalive1.length > 0 && alive2.length + subsalive2.length > 0) {
-        if (C) BAPI.data.api_kouku = {
+        if (C) BAPI.api_data.api_kouku = {
             api_plane_from: [[-1], [-1]],
             api_stage1: null,
             api_stage2: null,
             api_stage3: null
         };
-        airPhase(alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.data.api_kouku : undefined);
+        airPhase(alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.api_data.api_kouku : undefined);
         if (C) {
-            if (BAPI.data.api_kouku.api_stage1) BAPI.data.api_kouku.api_stage1.api_disp_seiku = {
+            if (BAPI.api_data.api_kouku.api_stage1) BAPI.api_data.api_kouku.api_stage1.api_disp_seiku = {
                 4: 1,
                 3: 2,
                 2: 0,
                 1: 3,
                 0: 4
             }[F1.AS + 2];
-            else BAPI.data.api_kouku = null;
-            if (BAPI.api_kouku) delete BAPI.data.api_kouku.api_stage3_combined;
+            else BAPI.api_data.api_kouku = null;
+            if (BAPI.api_kouku) delete BAPI.api_data.api_kouku.api_stage3_combined;
         }
 
         for (var i = 0; i < alive1.length; i++) {   //remove dead things
@@ -1778,17 +1778,17 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
     //second airphase
     if (!NBonly && aironly && !bombing && alive1.length + subsalive1.length > 0 && alive2.length + subsalive2.length > 0) {
         compareAP(F1, F2);
-        if (C) BAPI.data.api_kouku2 = {
+        if (C) BAPI.api_data.api_kouku2 = {
             api_plane_from: [[-1], [-1]],
             api_stage1: null,
             api_stage2: null,
             api_stage3: null
         };
-        airPhase(alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.data.api_kouku2 : undefined);
+        airPhase(alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.api_data.api_kouku2 : undefined);
         if (C) {
-            if (!BAPI.data.api_kouku2.api_stage1) delete BAPI.data.api_kouku2;
-            else BAPI.data.api_kouku2.api_stage1.api_disp_seiku = {4: 1, 3: 2, 2: 0, 1: 3, 0: 4}[F1.AS + 2];
-            delete BAPI.data.api_kouku.api_stage3_combined;
+            if (!BAPI.api_data.api_kouku2.api_stage1) delete BAPI.api_data.api_kouku2;
+            else BAPI.api_data.api_kouku2.api_stage1.api_disp_seiku = {4: 1, 3: 2, 2: 0, 1: 3, 0: 4}[F1.AS + 2];
+            delete BAPI.api_data.api_kouku.api_stage3_combined;
         }
 
         for (var i = 0; i < alive1.length; i++) {   //remove dead things
@@ -1820,20 +1820,20 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
         orderByRange(attackers1, order1);
 
         if (order1.length) {
-            if (C) BAPI.data.api_opening_taisen = {
+            if (C) BAPI.api_data.api_opening_taisen = {
                 api_at_list: [-1],
                 api_at_type: [-1],
                 api_damage: [-1],
                 api_df_list: [-1],
                 api_cl_list: [-1]
             };
-            shellPhase(order1, [], alive1, subsalive1, subsalive2, subsalive2, (C) ? BAPI.data.api_opening_taisen : undefined);
+            shellPhase(order1, [], alive1, subsalive1, subsalive2, subsalive2, (C) ? BAPI.api_data.api_opening_taisen : undefined);
         }
     }
 
     // opening torpedo
     if (!NBonly && !aironly && alive1.length + subsalive1.length > 0 && alive2.length + subsalive2.length > 0) {
-        if (C) BAPI.data.api_opening_atack = {
+        if (C) BAPI.api_data.api_opening_atack = {
             api_edam: [-1, 0, 0, 0, 0, 0, 0],
             api_erai: [-1, 0, 0, 0, 0, 0, 0],
             api_eydam: [-1, 0, 0, 0, 0, 0, 0],
@@ -1841,7 +1841,7 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
             api_frai: [-1, 0, 0, 0, 0, 0, 0],
             api_fydam: [-1, 0, 0, 0, 0, 0, 0]
         };
-        torpedoPhase(alive1, subsalive1, alive2, subsalive2, true, (C) ? BAPI.data.api_opening_atack : undefined);
+        torpedoPhase(alive1, subsalive1, alive2, subsalive2, true, (C) ? BAPI.api_data.api_opening_atack : undefined);
     }
 
     //shelling 1
@@ -1850,14 +1850,14 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
         orderByRange(alive1, order1);
         orderByRange(alive2, order2);
 
-        if (C) BAPI.data.api_hougeki1 = {
+        if (C) BAPI.api_data.api_hougeki1 = {
             api_at_list: [-1],
             api_at_type: [-1],
             api_damage: [-1],
             api_df_list: [-1],
             api_cl_list: [-1]
         };
-        shellPhase(order1, order2, alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.data.api_hougeki1 : undefined);
+        shellPhase(order1, order2, alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.api_data.api_hougeki1 : undefined);
     }
 
     //shelling 2
@@ -1870,19 +1870,19 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
             if (alive2[i].canShell()) order2.push(alive2[i]);
         }
 
-        if (C) BAPI.data.api_hougeki2 = {
+        if (C) BAPI.api_data.api_hougeki2 = {
             api_at_list: [-1],
             api_at_type: [-1],
             api_damage: [-1],
             api_df_list: [-1],
             api_cl_list: [-1]
         };
-        shellPhase(order1, order2, alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.data.api_hougeki2 : undefined);
+        shellPhase(order1, order2, alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.api_data.api_hougeki2 : undefined);
     }
 
     // closing torpedo
     if (!NBonly && !aironly && alive1.length + subsalive1.length > 0 && alive2.length + subsalive2.length > 0) {
-        if (C) BAPI.data.api_raigeki = {
+        if (C) BAPI.api_data.api_raigeki = {
             api_edam: [-1, 0, 0, 0, 0, 0, 0],
             api_erai: [-1, 0, 0, 0, 0, 0, 0],
             api_eydam: [-1, 0, 0, 0, 0, 0, 0],
@@ -1890,7 +1890,7 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
             api_frai: [-1, 0, 0, 0, 0, 0, 0],
             api_fydam: [-1, 0, 0, 0, 0, 0, 0]
         };
-        torpedoPhase(alive1, subsalive1, alive2, subsalive2, false, (C) ? BAPI.data.api_raigeki : undefined);
+        torpedoPhase(alive1, subsalive1, alive2, subsalive2, false, (C) ? BAPI.api_data.api_raigeki : undefined);
     }
 
     //night battle
