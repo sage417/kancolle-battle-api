@@ -18,7 +18,7 @@ router.get('/', function (req, res, next) {
                 api_msg: ''
             };
             let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
-            res.send(BAPI);
+            res.json(res.json({api_result: 1, api_result_msg: '成功', api_data: BAPI.api_data}));
         }).catch(function (err) {
         console.error(err);
         next(err);
@@ -29,7 +29,6 @@ function underSeaFleet(traveller_no, map_cell_no) {
     let fleet = new Fleet(2, false);
     let world_prefix = Math.trunc(traveller_no / 10);
     let world_sufix = traveller_no % 10;
-    console.log(ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`]['A']);
     let ships = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`]['A']['1']['c'];
     let s = [];
     for (let i = 0; i < ships.length; i++) {
