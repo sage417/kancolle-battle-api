@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src -d lib --source-maps -w"
+    "build-watch": "babel src -d lib --source-maps -w",
+    "build": "babel src -d lib",
+    "start-service": "node ./bin/www",
+    "build-run": "npm build && npm run"
   },
   "keywords": [],
   "author": "",
