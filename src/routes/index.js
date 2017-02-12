@@ -6,6 +6,17 @@ import {SHIPDATA} from "../kcSHIPDATA";
 let express = require('express');
 let router = express.Router();
 
+router.use(function checkApiMemberId(req, res, next) {
+    console.log("in checker");
+    let valid = false;
+    let api_member_id = req.query.api_member_id;
+    try {
+        valid = Number.isInteger(Number.parseInt(api_member_id));
+    } catch (e) {
+    }
+    valid ? next() : next(new Error("api_member_id is required"));
+});
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
     let member_id = Number.parseInt(req.query.api_member_id);
@@ -15,18 +26,18 @@ router.get('/', function (req, res, next) {
             let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_no);
             let BAPI = {
                 api_data: {},
-                api_msg: ''
             };
             let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
-            res.json(res.json({api_result: 1, api_result_msg: '成功', api_data: BAPI.api_data}));
+            res.json(BAPI.api_data);
         }).catch(function (err) {
         console.error(err);
         next(err);
     })
 });
 
+
 function underSeaFleet(traveller_no, map_cell_no) {
-    let fleet = new Fleet(2, false);
+    let fleet = new Fleet(1, false);
     let world_prefix = Math.trunc(traveller_no / 10);
     let world_sufix = traveller_no % 10;
     let ships = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`]['A']['1']['c'];
@@ -60,9 +71,11 @@ function memberFleet(fleet) {
 async function findMemberBattleFleet(member_id) {
     return await
         new Promise((resolve) => {
-            db.bind("member_battle_fleet").findOne({member_id}, function (err, result) {
-                resolve(result);
-            })
+            db.bind("member_battle_fleet").findOne({member_id}, {sort: {_id: 1}},
+                function (err, result) {
+                    resolve(result);
+                }
+            )
         });
 }
 

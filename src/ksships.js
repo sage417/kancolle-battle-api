@@ -180,8 +180,8 @@ Ship.prototype.loadEquips = function (equips, levels, addstats) {
         if (eq.RNG && eq.RNG > this.RNG) this.RNG = eq.RNG;
         if (eq.ACC) this.ACC += eq.ACC;
         if (eq.btype) {
-            if (!this.equiptypes[eq.btype]) this.equiptypes[eq.btype] = 1;
-            else this.equiptypes[eq.btype]++;
+            if (!this.equiptypes[eq.btype]) this.equiptypes[eq.btype] = [eq];
+            else this.equiptypes[eq.btype].push(eq);
         }
         if (eq.atype) {
             if (!atypes[eq.atype]) atypes[eq.atype] = 1;
@@ -360,9 +360,9 @@ Ship.prototype.canAS = function () {
 
 Ship.prototype.NBtype = function () {
     if (this._nbtype) return this._nbtype;
-    let mguns = (this.equiptypes[kcEQDATA.B_MAINGUN]) ? this.equiptypes[kcEQDATA.B_MAINGUN] : 0;
-    let sguns = (this.equiptypes[kcEQDATA.B_SECGUN]) ? this.equiptypes[kcEQDATA.B_SECGUN] : 0;
-    let torps = (this.equiptypes[kcEQDATA.B_TORPEDO]) ? this.equiptypes[kcEQDATA.B_TORPEDO] : 0;
+    let mguns = (this.equiptypes[kcEQDATA.B_MAINGUN]) ? this.equiptypes[kcEQDATA.B_MAINGUN].length : 0;
+    let sguns = (this.equiptypes[kcEQDATA.B_SECGUN]) ? this.equiptypes[kcEQDATA.B_SECGUN].length : 0;
+    let torps = (this.equiptypes[kcEQDATA.B_TORPEDO]) ? this.equiptypes[kcEQDATA.B_TORPEDO].length : 0;
     console.log(mguns);
     if (torps >= 2) this._nbtype = 6;  //torp cut-in
     else if (mguns >= 3) this._nbtype = 5; //triple gun cut-in
@@ -383,8 +383,8 @@ Ship.prototype.NBchance = function () {
 
 Ship.prototype.AStype = function () {
     if (this._astype) return this._astype;
-    let mguns = this.equiptypes[kcEQDATA.B_MAINGUN], sguns = this.equiptypes[kcEQDATA.B_SECGUN], radars = this.equiptypes[kcEQDATA.B_RADAR], apshells = this.equiptypes[B_APSHELL];
-    let recons = (this.equiptypes[kcEQDATA.B_RECON]) ? this.equiptypes[kcEQDATA.B_RECON] : 0;
+    let mguns = this.equiptypes[kcEQDATA.B_MAINGUN].length, sguns = this.equiptypes[kcEQDATA.B_SECGUN].length, radars = this.equiptypes[kcEQDATA.B_RADAR].length, apshells = this.equiptypes[B_APSHELL].length;
+    let recons = (this.equiptypes[kcEQDATA.B_RECON]) ? this.equiptypes[kcEQDATA.B_RECON].length : 0;
     this._astype = [];
     if (recons <= 0 || mguns <= 0) return this._astype;
 
@@ -395,6 +395,38 @@ Ship.prototype.AStype = function () {
     if (mguns >= 2) this._astype.push(2); //double attack
 
     return this._astype;
+};
+
+Ship.prototype.ASSlot = function (AStype) {
+    let slot = [];
+    switch (AStype) {
+        case 0:
+            if (this.equiptypes[kcEQDATA.B_MAINGUN]) slot = this.equiptypes[kcEQDATA.B_MAINGUN].slice(0, 1);
+            else if (this.equiptypes[kcEQDATA.B_SECGUN]) this.equiptypes[kcEQDATA.B_MAINGUN].slice(0, 1);
+            break;
+        case 2:
+            slot = this.equiptypes[kcEQDATA.B_MAINGUN].slice(0, 2);
+            break;
+        case 3:
+            slot[0].push(this.equiptypes[kcEQDATA.B_MAINGUN][0]);
+            slot[1].push(this.equiptypes[kcEQDATA.B_SECGUN][0]);
+            break;
+        case 4:
+            slot[0].push(this.equiptypes[kcEQDATA.B_MAINGUN][0]);
+            slot[1].push(this.equiptypes[kcEQDATA.B_SECGUN][0]);
+            slot[2].push(this.equiptypes[kcEQDATA.B_RADAR][0]);
+            break;
+        case 5:
+            slot[0].push(this.equiptypes[kcEQDATA.B_MAINGUN][0]);
+            slot[1].push(this.equiptypes[kcEQDATA.B_SECGUN][0]);
+            slot[2].push(this.equiptypes[kcEQDATA.B_APSHELL][0]);
+            break;
+        case 6:
+            slot = this.equiptypes[kcEQDATA.B_MAINGUN].slice(0, 2);
+            slot.push(this.equiptypes[kcEQDATA.B_APSHELL][0]);
+        default:
+    }
+    return slot.map(eq => eq.mid);
 };
 
 Ship.prototype.ASchance = function (ASstate) {

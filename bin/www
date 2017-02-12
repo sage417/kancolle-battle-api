@@ -10,7 +10,6 @@ require("babel-polyfill");
 var app = require('../lib/app.js');
 var debug = require('debug')('kancolle-battle-api:server');
 var http = require('http');
-var series = require('async/series');
 
 /**
  * Get port from environment and store in Express.

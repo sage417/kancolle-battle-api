@@ -619,7 +619,7 @@ function formationCountered(form1, form2) {
 }
 
 function shell(ship, target, APIhou) {
-    var da = false, cutin = false;
+    var da = 0, cutin = 0;
     var preMod = ship.fleet.formation.shellmod * ENGAGEMENT * ship.damageMod();
     var postMod = ship.APmod(target);
 
@@ -680,7 +680,7 @@ function shell(ship, target, APIhou) {
     if (target.isPT) {
         var sguns = 0;
         for (var i = 0; i < ship.equips.length; i++) {
-            if ([MAINGUNS, MAINGUNSAA, SECGUN, AAGUN].indexOf(ship.equips[i].type) != -1) sguns++;
+            if ([EQTDATA.MAINGUNS, EQTDATA.MAINGUNSAA, EQTDATA.SECGUN, EQTDATA.AAGUN].indexOf(ship.equips[i].type) != -1) sguns++;
         }
         if (sguns >= 2) {
             accMod *= 1.5;
@@ -709,7 +709,7 @@ function shell(ship, target, APIhou) {
         } else {
             realdmg1 = takeDamage(target, dmg1)
         }
-        ;
+
         var res2 = rollHit(accuracyAndCrit(ship, target, acc, evMod, 0, 1.3, ship.CVshelltype));
         var dmg2 = Math.floor(target.HP * (.06 + .08 * Math.random())), realdmg2 = 0;
         if (res2) {
@@ -720,14 +720,13 @@ function shell(ship, target, APIhou) {
         }
         ship.fleet.giveCredit(ship, dmg1 + dmg2);
 
-        if (C) {
-            console.log(ship.name + ' shells ' + target.name + ' for ' + dmg1 + ', ' + dmg2 + ' damage, ' + target.HP + '/' + target.maxHP + ' left');
-            APIhou.api_at_list.push(ship.apiID);
-            APIhou.api_df_list.push([target.apiID, target.apiID]);
-            APIhou.api_damage.push([realdmg1 + DIDPROTECT * .1, realdmg2 + DIDPROTECT * .1]);
-            APIhou.api_at_type.push(2);
-            APIhou.api_cl_list.push([((res1 > 1) ? 2 : 1), ((res2 > 1) ? 2 : 1)]);
-        }
+        console.log(ship.name + ' shells ' + target.name + ' for ' + dmg1 + ', ' + dmg2 + ' damage, ' + target.HP + '/' + target.maxHP + ' left');
+        APIhou.api_at_list.push(ship.apiID);
+        APIhou.api_df_list.push([target.apiID, target.apiID]);
+        APIhou.api_damage.push([realdmg1 + DIDPROTECT * .1, realdmg2 + DIDPROTECT * .1]);
+        APIhou.api_at_type.push(2);
+        APIhou.api_cl_list.push([((res1 > 1) ? 2 : 1), ((res2 > 1) ? 2 : 1)]);
+        APIhou.api_si_list.push(ship.ASSlot(2));
     } else {
         var res = rollHit(accuracyAndCrit(ship, target, acc, evMod, 0, 1.3, ship.CVshelltype), ship.critdmgbonus);
         var dmg = (cutin) ? Math.floor(target.HP * (.06 + .08 * Math.random())) : 0, realdmg = 0;
@@ -739,14 +738,13 @@ function shell(ship, target, APIhou) {
         }
         ship.fleet.giveCredit(ship, dmg);
 
-        if (C) {
-            console.log(ship.name + ' shells ' + target.name + ' for ' + dmg + ' damage, ' + target.HP + '/' + target.maxHP + ' left');
-            APIhou.api_at_list.push(ship.apiID);
-            APIhou.api_df_list.push([target.apiID]);
-            APIhou.api_damage.push([realdmg + DIDPROTECT * .1]);
-            APIhou.api_at_type.push((cutin) ? 3 : 0);
-            APIhou.api_cl_list.push([((res > 1) ? 2 : 1)]);
-        }
+        console.log(ship.name + ' shells ' + target.name + ' for ' + dmg + ' damage, ' + target.HP + '/' + target.maxHP + ' left');
+        APIhou.api_at_list.push(ship.apiID);
+        APIhou.api_df_list.push([target.apiID]);
+        APIhou.api_damage.push([realdmg + DIDPROTECT * .1]);
+        APIhou.api_at_type.push((cutin) ? 3 : 0);
+        APIhou.api_cl_list.push([((res > 1) ? 2 : 1)]);
+        APIhou.api_si_list.push(ship.ASSlot(cutin));
     }
     return (target.HP <= 0);
 }
@@ -946,7 +944,7 @@ function laser(ship, targets, APIhou) {
 
 function shellPhase(order1, order2, alive1, subsalive1, alive2, subsalive2, APIhou) {
     if (C) code += 'S:';
-    for (var i = 0; i < 6; i++) {
+    for (let i = 0; i < 6; i++) {
         if (i < order1.length && order1[i].canStillShell()) {
             if (subsalive2.length && order1[i].canASW()) {
                 var target = choiceWProtect(subsalive2);
@@ -1707,29 +1705,46 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
 
     if (bombing) aironly = true;
 
-    if (C) {
-        console.log('ENGAGEMENT: ' + ENGAGEMENT);
-        var dataroot = (NBonly) ? BAPI.yasen : BAPI.api_data;
-        dataroot.api_formation = [F1.formation.id, F2.formation.id, {1: 1, .8: 2, 1.2: 3, .6: 4}[ENGAGEMENT]];
-        dataroot.api_dock_id = 1;
-        dataroot.api_maxhps = [-1];
-        dataroot.api_nowhps = [-1];
-        for (var i = 0; i < 6; i++) {
-            dataroot.api_nowhps.push((i < ships1.length) ? ships1[i].HP : -1);
-            dataroot.api_maxhps.push((i < ships1.length) ? ships1[i].maxHP : -1);
-        }
-        dataroot.api_ship_ke = [];
-        dataroot.api_eSlot = [];
-        for (var i = 0; i < 6; i++) {
-            dataroot.api_ship_ke.push((i < ships2.length) ? ships2[i].mid : -1);
-            dataroot.api_nowhps.push((i < ships2.length) ? ships2[i].HP : -1);
-            dataroot.api_maxhps.push((i < ships2.length) ? ships2[i].maxHP : -1);
-            dataroot.api_eSlot.push([]);
-            for (var j = 0; j < 5; j++)
-                dataroot.api_eSlot[i].push((i < ships2.length && j < ships2[i].equips.length) ? ships2[i].equips[j].mid : -1);
-        }
 
+    console.log('ENGAGEMENT: ' + ENGAGEMENT);
+    var dataroot = (NBonly) ? BAPI.yasen : BAPI.api_data;
+    // TODO search
+    dataroot.api_search = [5, 6];
+    dataroot.api_formation = [F1.formation.id, F2.formation.id, {1: 1, .8: 2, 1.2: 3, .6: 4}[ENGAGEMENT]];
+    dataroot.api_dock_id = 1;
+    dataroot.api_maxhps = [-1];
+    dataroot.api_nowhps = [-1];
+    dataroot.api_fParam = [];
+    dataroot.api_eParam = [];
+    for (var i = 0; i < 6; i++) {
+        const lastShip = (i < ships1.length);
+        dataroot.api_nowhps.push(lastShip ? ships1[i].HP : -1);
+        dataroot.api_maxhps.push(lastShip ? ships1[i].maxHP : -1);
+        if (lastShip) {
+            let {FP, TP, AA, AR} = ships1[i];
+            dataroot.api_fParam.push([FP, TP, AA, AR]);
+        } else {
+            dataroot.api_fParam.push([0, 0, 0, 0]);
+        }
     }
+    dataroot.api_ship_ke = [-1];
+    dataroot.api_eSlot = [];
+    for (let i = 0; i < 6; i++) {
+        const lastShip = (i < ships1.length);
+        dataroot.api_ship_ke.push((i < ships2.length) ? ships2[i].mid : -1);
+        dataroot.api_nowhps.push((i < ships2.length) ? ships2[i].HP : -1);
+        dataroot.api_maxhps.push((i < ships2.length) ? ships2[i].maxHP : -1);
+        if (lastShip) {
+            let {FP, TP, AA, AR} = ships2[i];
+            dataroot.api_eParam.push([FP, TP, AA, AR]);
+        } else {
+            dataroot.api_eParam.push([0, 0, 0, 0]);
+        }
+        dataroot.api_eSlot.push([]);
+        for (let j = 0; j < 5; j++)
+            dataroot.api_eSlot[i].push((i < ships2.length && j < ships2[i].equips.length) ? ships2[i].equips[j].mid : -1);
+    }
+
     //if (C) console.log(API);
 
     var doShell2 = false;
@@ -1855,7 +1870,8 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
             api_at_type: [-1],
             api_damage: [-1],
             api_df_list: [-1],
-            api_cl_list: [-1]
+            api_cl_list: [-1],
+            api_si_list: [-1]
         };
         shellPhase(order1, order2, alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.api_data.api_hougeki1 : undefined);
     }
@@ -1875,7 +1891,8 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
             api_at_type: [-1],
             api_damage: [-1],
             api_df_list: [-1],
-            api_cl_list: [-1]
+            api_cl_list: [-1],
+            api_si_list: [-1]
         };
         shellPhase(order1, order2, alive1, subsalive1, alive2, subsalive2, (C) ? BAPI.api_data.api_hougeki2 : undefined);
     }
