@@ -40,7 +40,10 @@ function underSeaFleet(traveller_no, map_cell_no) {
     let fleet = new Fleet(1, false);
     let world_prefix = Math.trunc(traveller_no / 10);
     let world_sufix = traveller_no % 10;
-    let ships = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`]['A']['1']['c'];
+    let point = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`][map_cell_no];
+    let keys= Object.keys(point);
+    let fleetInfo = point[keys[Math.trunc(Math.random()*keys.length)]];
+    let ships = fleetInfo.c;
     let s = [];
     for (let i = 0; i < ships.length; i++) {
         let {LVL, HP, TP, FP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots, equips} = SHIPDATA[ships[i]];
@@ -49,7 +52,7 @@ function underSeaFleet(traveller_no, map_cell_no) {
         s.push(ship);
     }
     fleet.loadShips(s);
-    fleet.formation = ALLFORMATIONS['1'];
+    fleet.formation = ALLFORMATIONS[fleetInfo.f+''];
     return fleet;
 }
 
