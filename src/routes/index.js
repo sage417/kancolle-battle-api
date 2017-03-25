@@ -23,7 +23,7 @@ router.get('/', function (req, res, next) {
     findMemberBattleFleet(member_id)
         .then(function (result) {
             let fleet1 = memberFleet(result.fleets[0]);
-            let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_no);
+            let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_name);
             let BAPI = {
                 api_data: {},
             };
