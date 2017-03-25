@@ -46,8 +46,8 @@ function underSeaFleet(traveller_no, map_cell_no) {
     let ships = fleetInfo.c;
     let s = [];
     for (let i = 0; i < ships.length; i++) {
-        let {LVL, HP, TP, FP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots, equips} = SHIPDATA[ships[i]];
-        let ship = new Ship(ships[i], '', 1, LVL, HP, FP, TP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots);
+        let {name, LVL, HP, TP, FP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots, equips} = SHIPDATA[ships[i]];
+        let ship = new Ship(ships[i], name, 1, LVL, HP, FP, TP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots);
         ship.loadEquips(equips);
         s.push(ship);
     }
@@ -61,8 +61,8 @@ function memberFleet(fleet) {
     let ships = [];
     for (let i = 0; i < fleet.ships.length; i++) {
         let ship = fleet.ships[i];
-        let {id:mid, LVL, HP, TP, FP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots, equips} = ship;
-        let s = new Ship(mid, '', 0, LVL, HP, FP, TP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots);
+        let {id, LVL, HP, TP, FP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots, equips} = ship;
+        let s = new Ship(id, SHIPDATA[ship.id].name, 0, LVL, HP, FP, TP, AA, AR, EV, AWS, LOS, LUK, RNG, planeslots);
         s.loadEquips(equips);
         ships.push(s);
     }

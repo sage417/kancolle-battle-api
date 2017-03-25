@@ -124,6 +124,7 @@ Fleet.prototype.getMVP = function () {
 
 function Ship(id, name, side, LVL, HP, FP, TP, AA, AR, EV, ASW, LOS, LUK, RNG, planeslots) {
     this.id = 0;
+    this.name = name;
     this.mid = id;
     this.iscarrier = true;
     this.side = side;
