@@ -1,7 +1,8 @@
-let mongo = require('mongoskin');
+let mongo = require('mongodb');
 let Server = mongo.Server;
 let Db = mongo.Db;
 let ReplSet = mongo.ReplSet;
+let MongoClient = mongo.MongoClient;
 
 let replSet;
 
@@ -17,4 +18,7 @@ if (process.env['NODE_ENV'] === 'production') {
     ]);
 }
 
-export let db = new Db('kancolle', replSet, {w: 0, native_parser: (process.env['TEST_NATIVE'] != null)});
+// Connection URL
+var url = 'mongodb://192.168.1.100:40000,192.168.1.100:40001/kancolle?replicaSet=kancolle';
+
+// Use connect method to connect to the Server

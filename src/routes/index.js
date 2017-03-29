@@ -1,10 +1,12 @@
 import {sim, ALLFORMATIONS} from "../shipsim.js";
-import {db} from "../db";
 import {Fleet, Ship} from "../ksships";
 import {ENEMYCOMPS} from "../kcENEMYCOMP";
 import {SHIPDATA} from "../kcSHIPDATA";
+var MongoClient = require('mongodb').MongoClient;
 let express = require('express');
 let router = express.Router();
+
+
 
 router.use(function checkApiMemberId(req, res, next) {
     console.log("in checker");
@@ -20,15 +22,10 @@ router.use(function checkApiMemberId(req, res, next) {
 /* GET home page. */
 router.get('/', function (req, res, next) {
     let member_id = Number.parseInt(req.query.api_member_id);
-    findMemberBattleFleet(member_id)
+    console.info(new Date().getTime());
+    battle(member_id)
         .then(function (result) {
-            let fleet1 = memberFleet(result.fleets[0]);
-            let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_name);
-            let BAPI = {
-                api_data: {},
-            };
-            let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
-            res.json(BAPI.api_data);
+            res.json(result.api_data);
         }).catch(function (err) {
         console.error(err);
         next(err);
@@ -41,8 +38,8 @@ function underSeaFleet(traveller_no, map_cell_no) {
     let world_prefix = Math.trunc(traveller_no / 10);
     let world_sufix = traveller_no % 10;
     let point = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`][map_cell_no];
-    let keys= Object.keys(point);
-    let fleetInfo = point[keys[Math.trunc(Math.random()*keys.length)]];
+    let keys = Object.keys(point);
+    let fleetInfo = point[keys[Math.trunc(Math.random() * keys.length)]];
     let ships = fleetInfo.c;
     let s = [];
     for (let i = 0; i < ships.length; i++) {
@@ -52,7 +49,7 @@ function underSeaFleet(traveller_no, map_cell_no) {
         s.push(ship);
     }
     fleet.loadShips(s);
-    fleet.formation = ALLFORMATIONS[fleetInfo.f+''];
+    fleet.formation = ALLFORMATIONS[fleetInfo.f + ''];
     return fleet;
 }
 
@@ -71,15 +68,24 @@ function memberFleet(fleet) {
     return fleet1;
 }
 
-async function findMemberBattleFleet(member_id) {
-    return await
-        new Promise((resolve) => {
-            db.bind("member_battle_fleet").findOne({member_id}, {sort: {_id: 1}},
-                function (err, result) {
-                    resolve(result);
-                }
-            )
-        });
+async function battle(member_id) {
+    let BAPI = {
+        api_data: {},
+    };
+
+    var url = 'mongodb://192.168.1.100:40000,192.168.1.100:40001/kancolle?replicaSet=kancolle';
+    var db = await MongoClient.connect(url);
+
+
+    let result = await db.collection("member_battle_fleet").findOne({member_id}, {sort: {_id: 1}});
+
+    let fleet1 = memberFleet(result.fleets[0]);
+    let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_name);
+
+    let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
+
+    db.close();
+    return BAPI;
 }
 
 module.exports = router;
