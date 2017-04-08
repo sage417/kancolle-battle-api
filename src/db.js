@@ -22,3 +22,9 @@ if (process.env['NODE_ENV'] === 'production') {
 var url = 'mongodb://192.168.1.100:40000,192.168.1.100:40001/kancolle?replicaSet=kancolle';
 
 // Use connect method to connect to the Server
+
+async function getDb() {
+    return await MongoClient.connect(url);
+}
+
+export let db = getDb();

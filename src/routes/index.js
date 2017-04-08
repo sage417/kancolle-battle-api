@@ -2,7 +2,7 @@ import {sim, ALLFORMATIONS} from "../shipsim.js";
 import {Fleet, Ship} from "../ksships";
 import {ENEMYCOMPS} from "../kcENEMYCOMP";
 import {SHIPDATA} from "../kcSHIPDATA";
-var MongoClient = require('mongodb').MongoClient;
+import {db} from "../db";
 let express = require('express');
 let router = express.Router();
 
@@ -36,8 +36,8 @@ router.get('/', function (req, res, next) {
 function underSeaFleet(traveller_no, map_cell_no) {
     let fleet = new Fleet(1, false);
     let world_prefix = Math.trunc(traveller_no / 10);
-    let world_sufix = traveller_no % 10;
-    let point = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_sufix}`][map_cell_no];
+    let world_suffix = traveller_no % 10;
+    let point = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_suffix}`][map_cell_no];
     let keys = Object.keys(point);
     let fleetInfo = point[keys[Math.trunc(Math.random() * keys.length)]];
     let ships = fleetInfo.c;
@@ -73,18 +73,16 @@ async function battle(member_id) {
         api_data: {},
     };
 
-    var url = 'mongodb://192.168.1.100:40000,192.168.1.100:40001/kancolle?replicaSet=kancolle';
-    var db = await MongoClient.connect(url);
+    let connection = await db;
 
-
-    let result = await db.collection("member_battle_fleet").findOne({member_id}, {sort: {_id: 1}});
+    let result = await connection.collection("member_battle_fleet").findOne({member_id}, {sort: {_id: 1}});
 
     let fleet1 = memberFleet(result.fleets[0]);
     let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_name);
 
     let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
 
-    db.close();
+    connection.close();
     return BAPI;
 }
 
