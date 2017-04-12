@@ -33,13 +33,8 @@ router.get('/', function (req, res, next) {
 });
 
 
-function underSeaFleet(traveller_no, map_cell_no) {
+function underSeaFleet(fleetInfo) {
     let fleet = new Fleet(1, false);
-    let world_prefix = Math.trunc(traveller_no / 10);
-    let world_suffix = traveller_no % 10;
-    let point = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_suffix}`][map_cell_no];
-    let keys = Object.keys(point);
-    let fleetInfo = point[keys[Math.trunc(Math.random() * keys.length)]];
     let ships = fleetInfo.c;
     let s = [];
     for (let i = 0; i < ships.length; i++) {
@@ -78,9 +73,29 @@ async function battle(member_id) {
     let result = await connection.collection("member_battle_fleet").findOne({member_id}, {sort: {_id: 1}});
 
     let fleet1 = memberFleet(result.fleets[0]);
-    let fleet2 = underSeaFleet(result.traveller_no, result.map_cell_name);
+
+    let world_prefix = Math.trunc(result.traveller_no / 10);
+    let world_suffix = result.traveller_no % 10;
+    let point = ENEMYCOMPS[`World ${world_prefix}`][`${world_prefix}-${world_suffix}`][result.map_cell_name];
+    let keys = Object.keys(point);
+    let fleet_idx = Math.trunc(Math.random() * keys.length);
+    let fleetInfo = point[keys[fleet_idx]];
+
+    let fleet2 = underSeaFleet(fleetInfo);
 
     let battle_result = sim(fleet1, fleet2, false, false, false, false, false, BAPI);
+
+    await connection.collection("member_battle_fleet").updateOne({_id: result._id}, {
+        $set: {
+            'battle_result': {
+                win_rank: battle_result.rank,
+                mvp: battle_result.MVP,
+                enemy_deckport_id: fleet_idx + 1,
+                dests: battle_result.sunk2,
+                destsf: battle_result.flagsunk
+            }
+        }
+    });
 
     connection.close();
     return BAPI;

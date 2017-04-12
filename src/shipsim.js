@@ -1994,6 +1994,7 @@ function sim(F1, F2, Fsupport, doNB, NBonly, aironly, landbomb, BAPI) {
     results.redded = false;
     results.flagredded = (ships1[0].HP / ships1[0].maxHP <= .25);
     results.reddedIndiv = [false, false, false, false, false];
+    results.sunk2=sunk2;
     results.flagsunk = (ships2[0].HP <= 0);
     results.undamaged = true;
     results.buckets = 0;

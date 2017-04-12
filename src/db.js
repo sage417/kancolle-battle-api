@@ -1,6 +1,5 @@
 let mongo = require('mongodb');
 let Server = mongo.Server;
-let Db = mongo.Db;
 let ReplSet = mongo.ReplSet;
 let MongoClient = mongo.MongoClient;
 
@@ -19,7 +18,7 @@ if (process.env['NODE_ENV'] === 'production') {
 }
 
 // Connection URL
-var url = 'mongodb://192.168.1.100:40000,192.168.1.100:40001/kancolle?replicaSet=kancolle';
+let url = 'mongodb://192.168.1.100:40000,192.168.1.100:40001/kancolle?replicaSet=kancolle';
 
 // Use connect method to connect to the Server
 
