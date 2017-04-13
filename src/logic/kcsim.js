@@ -1432,5 +1432,3 @@ function simStats(numsims,foptions) {
 
     return 0;
 }
-
-export {sim, loadFleet, ALLFORMATIONS};

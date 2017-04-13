@@ -16402,5 +16402,3 @@ var SHIPDATA = {
         ammo: 0
     },
 };
-
-export {SHIPDATA};

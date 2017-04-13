@@ -893,5 +893,3 @@ Equip.prototype.setProficiency = function(rank) {
     }
     if (this.APbonus) this.isfighter = true;
 }
-
-export {Fleet, Ship, Equip};

@@ -1,8 +1,3 @@
-/**
- * Created by J.K.SAGE on 2017/2/7.
- */
-import {SHIPDATA} from "./kcSHIPDATA";
-
 var code = '';
 
 var API = {};
@@ -13,14 +8,12 @@ var started = false;
 //var SHIPIDSORTED = [0,80,275,81,276,77,82,87,88,20,228,83,277,84,278,90,279,197,91,280,196,50,229,9,201,426,10,202,32,203,11,204,33,205,420,12,206,13,207,195,14,208,24,57,118,25,58,119,78,209,149,86,210,150,79,211,151,85,212,152,89,285,26,286,411,27,287,412,51,213,52,214,76,281,157,1,254,434,2,255,435,28,256,418,29,257,6,258,30,259,7,260,31,261,99,215,100,216,101,217,146,21,218,22,219,141,53,221,23,220,54,222,158,55,223,159,56,224,160,102,104,103,105,70,73,59,262,416,60,263,417,61,264,62,265,319,63,266,192,64,267,193,65,268,194,66,269,67,270,68,271,428,69,272,427,71,273,188,72,274,189,75,283,92,284,408,93,230,15,231,94,232,16,233,407,34,234,437,35,235,147,36,236,37,237,38,238,326,39,239,40,240,41,241,419,42,242,43,243,145,44,244,45,245,144,46,246,47,247,95,248,96,249,199,97,250,98,251,48,252,49,253,464,470,17,225,18,226,19,227,74,282,106,107,108,291,296,109,292,297,110,288,461,466,111,112,462,467,113,289,114,290,200,115,293,116,117,120,121,190,300,122,294,123,295,142,191,401,124,129,125,130,126,398,127,399,128,400,131,136,132,301,133,302,134,303,135,304,137,305,138,306,139,307,140,314,143,148,153,156,154,343,155,403,161,166,163,402,164,308,165,309,167,320,168,317,169,313,170,312,171,172,173,178,174,310,179,175,311,180,176,177,448,358,181,316,182,187,183,321,184,185,318,186,322,404,406,331,429,332,430,432,353,405,323,409,324,410,325,413,327,414,328,415,329,421,330,422,346,423,357,424,345,425,344,465,356,431,334,436,441,446,442,447,443,347,452,359,445,450,451,348,453,349,454,354,455,355,458,350,459,351,469,460,352];
 var SHIPIDSORTED = [0], tempships = [];
 for (var sid in SHIPDATA) {
-    if (sid > 500) continue;
+    if (sid > 1000) continue;
     if (SHIPDATA[sid].prev) continue;
     tempships.push(sid);
 }
-tempships.sort(function (a, b) {
-    return (SHIPDATA[a].nid < SHIPDATA[b].nid) ? -1 : 1;
-});
-for (var i = 0; i < tempships.length; i++) {
+tempships.sort(function(a,b) { return (SHIPDATA[a].nid < SHIPDATA[b].nid)? -1:1; });
+for (var i=0; i<tempships.length; i++) {
     var sid = tempships[i];
     SHIPIDSORTED.push(parseInt(sid));
     while (SHIPDATA[sid].next) {
@@ -29,19 +22,10 @@ for (var i = 0; i < tempships.length; i++) {
         SHIPIDSORTED.push(sid);
     }
 }
-var SHIPCLASSSORTED = {
-    'Battleships': [],
-    'Carriers': [],
-    'Light Carriers': [],
-    'Heavy Cruisers': [],
-    'Light Cruisers': [],
-    'Destroyers': [],
-    'Submarines': [],
-    'Auxiliary': []
-};
-for (var i = 0; i < SHIPIDSORTED.length; i++) {
-    if (SHIPIDSORTED[i] < 500) {
-        switch (SHIPDATA[SHIPIDSORTED[i]].type) {
+var SHIPCLASSSORTED = {'Battleships':[],'Carriers':[],'Light Carriers':[],'Heavy Cruisers':[],'Light Cruisers':[],'Destroyers':[],'Submarines':[],'Auxiliary':[]};
+for (var i=0; i<SHIPIDSORTED.length; i++) {
+    if (SHIPIDSORTED[i] < 1000) {
+        switch(SHIPDATA[SHIPIDSORTED[i]].type) {
             case 'BB':
             case 'FBB':
             case 'BBV':
@@ -49,7 +33,6 @@ for (var i = 0; i < SHIPIDSORTED.length; i++) {
                 SHIPCLASSSORTED['Battleships'].push(SHIPIDSORTED[i]);
                 break;
             case 'CV':
-            case 'CVN':
             case 'CVB':
                 SHIPCLASSSORTED['Carriers'].push(SHIPIDSORTED[i]);
                 break;
@@ -81,101 +64,81 @@ for (var i = 0; i < SHIPIDSORTED.length; i++) {
 // console.log(SHIPCLASSSORTED);
 
 var defaultEquips = {
-    'DD': [122, 122, 29],
-    'CL': [90, 90, 59],
-    'CLT': [90, 90, 41],
-    'CA': [50, 90, 59, 31],
-    'CAV': [50, 90, 79, 79],
-    'BB': [8, 8, 59, 36],
-    'BBV': [8, 8, 36, 79],
-    'FBB': [7, 7, 59, 36],
-    'SS': [15, 15],
-    'SSV': [15, 15],
-    'CV': [52, 52, 22, 22],
-    'CVN': [52, 52, 22, 22],
-    'CVB': [52, 52, 22, 22],
-    'CVL': [52, 52],
-    'AV': [12, 12, 41],
-    'LHA': [22, 22],
+    'DD': [122,122,29],
+    'CL': [90,90,59],
+    'CLT': [90,90,41],
+    'CA': [50,90,59,31],
+    'CAV': [50,90,79,79],
+    'BB': [8,8,59,36],
+    'BBV': [8,8,36,79],
+    'FBB': [7,7,59,36],
+    'SS': [15,15,15,15],
+    'SSV': [15,15,15,15],
+    'CV': [52,52,22,22],
+    'CVB': [52,52,22,22],
+    'CVL': [52,52,22,22],
+    'AV': [12,12,12,12],
+    'LHA': [22,22,22,22],
 };
 
 
+
 function shuffle(o) {
-    for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
 }
 
 function loadFile(fleet) {
-    if ($('#flashingdiv')) {
-        $('#flashingdiv').css('animation', '');
-        $('#flashingdiv').css('border', '');
-    }
-    var files = document.getElementById('T' + fleet + 'sfile').files;
-    var fromfleet = $('#T' + fleet + 'sfilefrom').val();
+    if ($('#flashingdiv')) { $('#flashingdiv').css('animation',''); $('#flashingdiv').css('border',''); }
+    var files = document.getElementById('T'+fleet+'sfile').files;
+    var fromfleet = $('#T'+fleet+'sfilefrom').val();
     var reader = new FileReader();
     reader.readAsText(files[0]);
-    reader.addEventListener('loadend', function () {
-        processFile(fleet, reader, fromfleet);
-    });
+    reader.addEventListener('loadend',function() { processFile(fleet,reader,fromfleet); });
     // document.getElementById('fleetchoose'+hide).style.display = 'none';
 }
 
-function processFile(fleetnum, reader, fromfleet) {
-    // if (started) return;
+function processFile(fleetnum,reader,fromfleet) {
     var kcdata = JSON.parse(reader.result);
-    // console.log(kcdata);
 
-    // genFleetHTML('fleetspace'+fleet);
-
-    var fleet = kcdata.fleets[parseInt(fromfleet) - 1].ships;
-    // var s1 = [];
-    for (var i = 0; i < fleet.length; i++) {
+    var fleet = kcdata.fleets[parseInt(fromfleet)-1].ships;
+    for (var i=0; i<fleet.length; i++) {
         var fid = fleet[i];
-        if (fid <= 0) {
-            clickedClear(fleetnum, i);
-            continue;
-        }
-        var mid = kcdata.ships['x' + fid].masterId;
-        var ship = kcdata.ships['x' + fid];
+        if (fid <= 0) { clickedClear(fleetnum,i); continue; }
+        var mid = kcdata.ships['x'+fid].masterId;
+        var ship = kcdata.ships['x'+fid];
         var name = SHIPDATA[mid].name;
         if (!name) name = '';
-        // console.log(fid+' '+mid+' '+name);
-        // var ShipType = SHIPDATA[mid].type;
-        // s1.push(new ShipType(mid,name,0,ship.level,ship.hp[1],ship.fp[0],ship.tp[0],ship.aa[0],ship.ar[0],ship.ev[0],ship.as[0],ship.ls[0],ship.lk[0],ship.range,ship.slots.splice(0,4)));
 
-        var equips = [], improves = [];
-        for (var j = 0; j < 4; j++) {  //get equip mids
+        var equips = [],improves = [], profs = [];
+        for (var j=0; j<4; j++) {  //get equip mids
             // console.log(ship.items[j]);
-            if (ship.items[j] == -1) {
-                equips.push(0);
-                improves.push(0);
-            }
+            if (ship.items[j] == -1) { equips.push(0); improves.push(0); profs.push(0); }
             else {
-                var idata = kcdata.gears['x' + ship.items[j]];
+                var idata = kcdata.gears['x'+ship.items[j]];
                 var eq = EQDATA[idata.masterId];
                 if (!eq) continue;
                 equips.push(idata.masterId);
-                if (eq.improveType == 1) improves.push((idata.stars >= 0) ? idata.stars : 0);
-                else if (eq.improveType == 2) improves.push((idata.ace >= 0) ? idata.ace : 0);
-                else improves.push(0);
+                improves.push((idata.stars>=0)? idata.stars : 0);
+                profs.push((idata.ace>=0)? idata.ace : 0);
             }
         }
-        //REMEMBER HARDCODED TABLE 1, AND SPEED 1
-        tableSetShip(fleetnum, i, mid, [ship.level, ship.hp[1], ship.fp[0], ship.tp[0], ship.aa[0], ship.ar[0], ship.ev[0], ship.as[0], ship.ls[0], ship.lk[0], ship.range, SHIPDATA[mid].SPD], equips, improves);
+        if (ship.ex_item) {
+            var idata = kcdata.gears['x'+ship.ex_item];
+            if (EQDATA[idata.masterId]) {
+                equips.push(idata.masterId);
+                improves.push((idata.stars>=0)? idata.stars : 0);
+                profs.push((idata.ace>=0)? idata.ace : 0);
+            }
+        } else {
+            equips.push(0);
+            improves.push(0);
+            profs.push(0);
+        }
+
+        tableSetShip(fleetnum,i,mid,[ship.level,ship.hp[1],ship.fp[0],ship.tp[0],ship.aa[0],ship.ar[0],ship.ev[0],ship.as[0],ship.ls[0],ship.lk[0],ship.range,SHIPDATA[mid].SPD],equips,improves,profs);
     }
     updateFleetCode(fleetnum);
-
-    // var f1 = new Fleet(0);
-    // f1.loadShips(s1);
-    // f1.formation = LINEAHEAD;
-
-
-    // for (var i=0; i<fleet.length; i++) {
-    //WHAT DID I TYPE THIS FOR????
-    // }
-    // sim(f1,FLEET2);
-    // setup();
-    // started = true;
 }
 
 function getHP(ship, lv) {
@@ -191,61 +154,74 @@ function getHP(ship, lv) {
     return ret
 }
 
-function processDeckbuilderCode(fleet, dbcode) {
+//old, now loads directly in loadFleetFromCode
+function processDeckbuilderCode(fleet,dbcode) {
     try {
         var data = JSON.parse(dbcode);
-    } catch (e) {
+    } catch(e) {
         return;
     }
 
     for (var slot in data.f1) {
         var ship = data.f1[slot];
-        var slotn = parseInt(slot.substr(1)) - 1;
+        var slotn = parseInt(slot.substr(1))-1;
         var shipd = SHIPDATA[ship.id];
-        var stats = [ship.lv, getHP(shipd, ship.lv), shipd.FP, shipd.TP, shipd.AA, shipd.AR, shipd.EV, shipd.ASW, shipd.LOS, (ship.luck) ? ship.luck : shipd.LUK, shipd.RNG, shipd.SPD];
-        var equips = [0, 0, 0, 0], improvs = [0, 0, 0, 0];
+        var stats = [ship.lv,getHP(shipd,ship.lv),shipd.FP,shipd.TP,shipd.AA,shipd.AR,shipd.EV,shipd.ASW,shipd.LOS,(ship.luck)? ship.luck : shipd.LUK,shipd.RNG,shipd.SPD];
+        var equips = [0,0,0,0], improvs = [0,0,0,0];
         for (var item in ship.items) {
             var islot = item.substr(1);
-            if (islot == 'x') continue;
-            equips[islot - 1] = ship.items[item].id;
-            improvs[islot - 1] = ship.items[item].rf;
+            if (islot=='x') continue;
+            equips[islot-1] = ship.items[item].id;
+            improvs[islot-1] = ship.items[item].rf;
         }
-        tableSetShip(fleet, slotn, ship.id, stats, equips, improvs);
-        for (var i = 0; i < 4; i++) changedEquip(fleet, slotn, i, true);
+        tableSetShip(fleet,slotn,ship.id,stats,equips,improvs);
+        for (var i=0; i<5; i++) changedEquip(fleet,slotn,i,true);
     }
 
     updateFleetCode(fleet);
 }
 
 function exportDeckbuilder(fleet) {
-    var data = {version: 3, f1: {}};
-    for (var i = 0; i < 6; i++) {
-        var mid = parseInt($('#T' + fleet + 'n' + i).val());
-        if (mid >= 900) return;
+    var data = {version:4,f1:{}};
+    for (var i=0; i<6; i++) {
+        var mid = parseInt($('#T'+fleet+'n'+i).val());
+        if (mid >= 2000) return;
         if (!mid) continue;
-        var ship = data.f1['s' + (i + 1)] = {};
+        //temp fix for abyssal id shift, see how deckbuilder handles it
+        if (mid > 1000) mid -= 1000;
+        var ship = data.f1['s'+(i+1)] = {};
         ship.id = mid;
-        ship.lv = parseInt($('#T' + fleet + 'lvl' + i).val());
-        ship.luck = parseInt($('#T' + fleet + 'luk' + i).val());
+        ship.lv = parseInt($('#T'+fleet+'lvl'+i).val());
+        ship.luck = parseInt($('#T'+fleet+'luk'+i).val());
         ship.items = {};
-        for (var j = 0; j < 4; j++) {
+        for (var j=0; j<4; j++) {
             var eq = parseInt(PREVEQS[fleet][i][j]);
             if (!eq) continue;
-            var impr = parseInt($('#T' + fleet + 'imprv' + i + j).val());
-            ship.items['i' + (j + 1)] = {id: eq};
-            if (impr) ship.items['i' + (j + 1)].rf = impr;
+            var impr = parseInt($('#T'+fleet+'imprv'+i+j).val());
+            var prof = parseInt($('#T'+fleet+'prof'+i+j).val());
+            ship.items['i'+(j+1)] = {id:eq};
+            if (impr) ship.items['i'+(j+1)].rf = impr;
+            if (prof) ship.items['i'+(j+1)].mas = prof;
+        }
+        if (parseInt(PREVEQS[fleet][i][4])) {
+            var impr = parseInt($('#T'+fleet+'imprv'+i+'4').val());
+            var prof = parseInt($('#T'+fleet+'prof'+i+'4').val());
+            ship.items.ix = {id:parseInt(PREVEQS[fleet][i][4])};
+            if (impr) ship.items.ix.rf = impr;
+            if (prof) ship.items.ix.mas = prof;
         }
     }
-    var url = 'http://www.kancolle-calc.net/deckbuilder.html?predeck=' + encodeURI(JSON.stringify(data));
+
+    var url = 'http://www.kancolle-calc.net/deckbuilder.html?predeck='+encodeURI(JSON.stringify(data));
     window.open(url);
 }
 
 function isPlayable(shipid) {
-    return (shipid < 500 || (shipid >= 901 && shipid <= 903));
+    return (shipid < 1000 || (shipid >= 2001 && shipid <= 2003));
 }
 
-function sameShip(mid1, mid2) {
-    if (mid1 == mid2) return true;
+function sameShip(mid1,mid2) {
+    if (mid1==mid2) return true;
     var shipd1 = SHIPDATA[mid1];
     var done = [];
     while (shipd1.prev) {
@@ -262,5 +238,3 @@ function sameShip(mid1, mid2) {
     }
     return false;
 }
-
-export {code, shuffle};

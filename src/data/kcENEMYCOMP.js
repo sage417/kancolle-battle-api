@@ -1793,5 +1793,3 @@ var ENEMYCOMPS = {
         }
     },
 };
-
-export {ENEMYCOMPS};
