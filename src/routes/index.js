@@ -1,5 +1,5 @@
 import {sim, ALLFORMATIONS} from "../shipsim.js";
-import {Fleet, Ship} from "../ksships";
+import {Fleet, Ship} from "../kcships";
 import {ENEMYCOMPS} from "../kcENEMYCOMP";
 import {SHIPDATA} from "../kcSHIPDATA";
 import {db} from "../db";
